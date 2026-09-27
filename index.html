@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YOUFLIX</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: #0d0d0d;
+      color: #ffffff;
+      padding-bottom: 80px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.95);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      color: #E50914;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+    .search-box {
+      width: 65%;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 9px 15px;
+      border-radius: 20px;
+      border: 1px solid #333;
+      background: #1f1f1f;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      box-shadow: inset 0 -80px 45px #0d0d0d;
+      margin-bottom: 15px;
+    }
+    .hero-content {
+      z-index: 2;
+    }
+    .hero-tag {
+      background: #E50914;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .hero-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+    .hero-play-btn {
+      background: #ffffff;
+      color: #000;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Grid */
+    .container {
+      padding: 0 16px;
+    }
+    .section-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #bbb;
+      margin-bottom: 12px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .card {
+      background: #1a1a1a;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .card img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      display: block;
+    }
+    .card-info {
+      padding: 8px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      font-size: 11px;
+      color: #aaa;
+    }
+    .badge {
+      font-size: 10px;
+      background: #E50914;
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* Top Rated */
+    .top-rated-box {
+      margin: 25px 16px;
+      background: #191414;
+      border: 1px solid #E50914;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .top-rated-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #E50914;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Bottom Plus (+) Button */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: rgba(13, 13, 13, 0.95);
+      border-top: 1px solid #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 150;
+    }
+    .plus-btn {
+      width: 48px;
+      height: 48px;
+      background: #E50914;
+      color: #fff;
+      border-radius: 50%;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(229, 9, 20, 0.5);
+    }
+
+    /* Admin Modal */
+    #uploadModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 300;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-content {
+      background: #1c1c1c;
+      padding: 18px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid #333;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-content h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #E50914;
+      text-align: center;
+    }
+
+    /* Earnings */
+    .earnings-box {
+      background: #142217;
+      border: 1px solid #25D366;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .earnings-title {
+      font-size: 11px;
+      color: #25D366;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .earnings-numbers {
+      display: flex;
+      justify-content: space-around;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .input-label {
+      font-size: 11px;
+      color: #aaa;
+      margin-bottom: 3px;
+      display: block;
+    }
+    .modal-content input[type="text"] {
+      width: 100%;
+      padding: 9px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background: #0d0d0d;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .file-upload-wrapper {
+      margin-bottom: 12px;
+    }
+    .file-input {
+      width: 100%;
+      padding: 8px;
+      background: #111;
+      border: 1px dashed #555;
+      border-radius: 6px;
+      color: #ccc;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .modal-btns button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-save { background: #E50914; color: #fff; }
+    .btn-cancel { background: #333; color: #fff; }
+
+    /* Manage/Delete List in Admin */
+    .delete-section {
+      margin-top: 20px;
+      border-top: 1px solid #333;
+      padding-top: 14px;
+    }
+    .delete-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #111;
+      padding: 8px 10px;
+      border-radius: 5px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .del-btn {
+      background: #c1121f;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* Player View */
+    #playerView {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      z-index: 250;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .player-header {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      background: #000;
+      position: sticky;
+      top: 0;
+      z-index: 260;
+    }
+    .back-btn {
+      background: #E50914;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 12px;
+    }
+    .video-box {
+      width: 100%;
+      height: 220px;
+      background: #000;
+    }
+    video, iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .content-area {
+      padding: 16px;
+    }
+    .trailer-card {
+      background: linear-gradient(90deg, #221212, #181818);
+      border: 1px solid #E50914;
+      padding: 11px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      cursor: pointer;
+    }
+    .trailer-badge {
+      font-size: 10px;
+      background: #E50914;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+
+    .episodes-wrapper {
+      max-height: 380px;
+      overflow-y: auto;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 6px;
+      background: #111;
+      margin-bottom: 16px;
+    }
+    .ep-item {
+      background: #181818;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #262626;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .ep-item.active {
+      border-color: #E50914;
+      background: #2b1111;
+    }
+    .ep-title-click {
+      flex: 1;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      margin-right: 8px;
+    }
+    .ep-delete-btn {
+      background: transparent;
+      border: 1px solid #666;
+      color: #ff6b6b;
+      padding: 4px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .rating-container {
+      background: #141414;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #282828;
+    }
+    .stars {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      font-size: 28px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .star { color: #444; }
+    .star.selected { color: #ffb703; }
+    .rating-result-text {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #25D366;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">YOUFLIX</div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="फ़िल्म / सीरीज़ खोजें..." onkeyup="searchContent()">
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <div class="hero-banner" id="heroBanner">
+    <div class="hero-content">
+      <span class="hero-tag">FEATURED TRAILER</span>
+      <div class="hero-title" id="heroTitle">Loading...</div>
+      <button class="hero-play-btn" onclick="playHero()">▶ Play Trailer</button>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="container">
+    <div class="section-title">All Movies & Web Series</div>
+    <div class="grid" id="movieGrid"></div>
+  </div>
+
+  <!-- Top Rated Section -->
+  <div class="top-rated-box" id="topRatedBox">
+    <div class="top-rated-title">⭐ Best Movie by Audience ⭐</div>
+    <div id="bestMovieName" style="font-size: 15px; font-weight: bold;">Loading...</div>
+    <div style="color: #ffb703; font-size: 16px; margin-top: 2px;">⭐⭐⭐⭐⭐</div>
+  </div>
+
+  <!-- Bottom + Button -->
+  <div class="bottom-bar">
+    <button class="plus-btn" onclick="openUploadModal()">+</button>
+  </div>
+
+  <!-- Admin Modal (Upload & Delete) -->
+  <div id="uploadModal">
+    <div class="modal-content">
+      <h3>Admin & Movie Manager</h3>
+
+      <!-- Earnings -->
+      <div class="earnings-box">
+        <div class="earnings-title">💰 आपकी कुल कमाई (Est. Revenue)</div>
+        <div class="earnings-numbers">
+          <div>👁️ Views: <span id="viewsCount">0</span></div>
+          <div>💵 <span id="usdAmount">$0.00</span></div>
+          <div>₹ <span id="inrAmount">0.00</span></div>
+        </div>
+      </div>
+
+      <span class="input-label">फ़िल्म / वेब सीरीज़ का नाम:</span>
+      <input type="text" id="seriesTitle" placeholder="उदा. Pushpa 2, Mirzapur">
+
+      <span class="input-label">सीज़न (Season):</span>
+      <input type="text" id="seasonName" placeholder="उदा. Season 1 या Season 2">
+
+      <span class="input-label">पार्ट या एपिसोड का नाम (Part):</span>
+      <input type="text" id="partName" placeholder="उदा. Part 1, Part 2">
+
+      <div class="file-upload-wrapper">
+        <span class="input-label">🖼️ मुख्य बैनर फ़ोटो (Landscape):</span>
+        <input type="file" id="bannerFileInput" class="file-input" accept="image/*">
+      </div>
+
+      <div class="file-upload-wrapper">
+        <span class="input-label">🎴 पोस्टर / थंबनेल फ़ोटो (Vertical):</span>
+        <input type="file" id="posterFileInput" class="file-input" accept="image/*">
+      </div>
+
+      <div class="file-upload-wrapper">
+        <span class="input-label">🎬 ट्रेलर वीडियो चुनें:</span>
+        <input type="file" id="trailerFileInput" class="file-input" accept="video/*">
+        <input type="text" id="trailerURL" placeholder="वैकल्पिक: ट्रेलर ऑनलाइन लिंक" style="margin-top: 4px;">
+      </div>
+
+      <div class="file-upload-wrapper">
+        <span class="input-label">▶ फुल वीडियो चुनें:</span>
+        <input type="file" id="videoFileInput" class="file-input" accept="video/*">
+        <input type="text" id="videoURL" placeholder="वैकल्पिक: वीडियो ऑनलाइन लिंक" style="margin-top: 4px;">
+      </div>
+
+      <div class="modal-btns">
+        <button class="btn-save" onclick="saveNewContent()">Save / Add</button>
+        <button class="btn-cancel" onclick="closeUploadModal()">Cancel</button>
+      </div>
+
+      <!-- Delete Full Movies Section -->
+      <div class="delete-section">
+        <span class="input-label" style="color: #ff6b6b; font-weight: bold; margin-bottom: 8px;">🗑️ फ़िल्म या सीरीज़ डिलीट करें:</span>
+        <div id="deleteMoviesList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Player Screen -->
+  <div id="playerView">
+    <div class="player-header">
+      <button class="back-btn" onclick="closePlayer()">← Back</button>
+      <span id="playerHeaderTitle" style="font-size: 14px; font-weight: bold;"></span>
+    </div>
+
+    <div class="video-box" id="videoBox"></div>
+
+    <div class="content-area">
+      <!-- Trailer -->
+      <div class="trailer-card" onclick="playCurrentTrailer()">
+        <div>
+          <span class="trailer-badge">TRAILER</span>
+          <span style="font-size: 13px; font-weight: bold;">Watch Official Trailer</span>
+        </div>
+        <span style="color: #E50914; font-weight: bold; font-size: 13px;">▶ Play</span>
+      </div>
+
+      <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px; color: #aaa;" id="seasonLabel">Parts & Episodes</div>
+
+      <div class="episodes-wrapper" id="episodesList"></div>
+
+      <!-- Rating -->
+      <div class="rating-container">
+        <div style="font-size: 14px; font-weight: bold; margin-bottom: 4px;">आपको यह पिक्चर कैसी लगी?</div>
+        <div style="font-size: 12px; color: #888;">5 स्टार देकर अपनी राय दें:</div>
+        <div class="stars">
+          <span class="star" onclick="rateMovie(1)">★</span>
+          <span class="star" onclick="rateMovie(2)">★</span>
+          <span class="star" onclick="rateMovie(3)">★</span>
+          <span class="star" onclick="rateMovie(4)">★</span>
+          <span class="star" onclick="rateMovie(5)">★</span>
+        </div>
+        <div class="rating-result-text" id="ratingMessage"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generate100Episodes(sampleVideo) {
+      let list = [];
+      for (let i = 1; i <= 100; i++) {
+        list.push({
+          name: `Part ${i} - Episode ${i}`,
+          video: sampleVideo
+        });
+      }
+      return list;
+    }
+
+    const sampleVideoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+
+    const defaultData = [
+      {
+        id: "s_1",
+        title: "Pushpa 2: The Rule",
+        season: "Season 1",
+        banner: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?w=1200&auto=format&fit=crop",
+        img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop",
+        trailer: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        rating: 5.0,
+        votes: 24,
+        episodes: generate100Episodes(sampleVideoUrl)
+      }
+    ];
+
+    let allSeries = JSON.parse(localStorage.getItem('youflix_full_series')) || defaultData;
+    let currentSeries = null;
+    let totalViews = parseInt(localStorage.getItem('youflix_views')) || 1250;
+
+    function updateHero() {
+      if (allSeries.length > 0) {
+        const topItem = allSeries[0];
+        const bannerImg = topItem.banner || topItem.img;
+        document.getElementById('heroBanner').style.backgroundImage = `url('${bannerImg}')`;
+        document.getElementById('heroTitle').innerText = topItem.title;
+      } else {
+        document.getElementById('heroBanner').style.backgroundImage = 'none';
+        document.getElementById('heroTitle').innerText = "कोई फ़िल्म मौजूद नहीं है";
+      }
+    }
+
+    function playHero() {
+      if (allSeries.length > 0) openSeries(0);
+    }
+
+    function updateBestMovieUI() {
+      if (allSeries.length > 0) {
+        let best = allSeries.reduce((prev, curr) => (prev.rating > curr.rating) ? prev : curr);
+        document.getElementById('bestMovieName').innerText = `${best.title} (${best.rating.toFixed(1)}/5)`;
+      } else {
+        document.getElementById('bestMovieName').innerText = "N/A";
+      }
+    }
+
+    function renderGrid(list) {
+      const grid = document.getElementById('movieGrid');
+      grid.innerHTML = '';
+      list.forEach((item, index) => {
+        grid.innerHTML += `
+          <div class="card" onclick="openSeries(${index})">
+            <img src="${item.img}" alt="${item.title}">
+            <div class="card-info">
+              <div class="card-title">${item.title}</div>
+              <div class="card-meta">
+                <span class="badge">${item.season || 'S1'}</span>
+                <span>${item.episodes ? item.episodes.length : 1} Parts</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function searchContent() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const filtered = allSeries.filter(s => s.title.toLowerCase().includes(q));
+      renderGrid(filtered);
+    }
+
+    // Admin PIN: 8839636988
+    function openUploadModal() {
+      const pin = prompt("Admin PIN दर्ज करें:");
+      if (pin === "8839636988") {
+        const usd = (totalViews / 1000) * 1.50;
+        const inr = usd * 83.50;
+
+        document.getElementById('viewsCount').innerText = totalViews;
+        document.getElementById('usdAmount').innerText = "$" + usd.toFixed(2);
+        document.getElementById('inrAmount').innerText = inr.toFixed(2);
+
+        renderDeleteList();
+        document.getElementById('uploadModal').style.display = 'flex';
+      } else {
+        alert("गलत पिन! केवल एडमिन ही यह पैनल खोल सकता है।");
+      }
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').style.display = 'none';
+    }
+
+    // डिलीट लिस्ट को एडमिन पैनल में दिखाना
+    function renderDeleteList() {
+      const box = document.getElementById('deleteMoviesList');
+      box.innerHTML = '';
+      if (allSeries.length === 0) {
+        box.innerHTML = '<span style="color:#666; font-size:11px;">कोई फ़िल्म नहीं है</span>';
+        return;
+      }
+      allSeries.forEach((item, idx) => {
+        box.innerHTML += `
+          <div class="delete-item">
+            <span>${item.title} (${item.season || 'S1'})</span>
+            <button class="del-btn" onclick="deleteEntireMovie(${idx})">🗑️ Delete</button>
+          </div>
+        `;
+      });
+    }
+
+    // 1. पूरी फ़िल्म डिलीट करने का फंक्शन
+    function deleteEntireMovie(index) {
+      const itemTitle = allSeries[index].title;
+      if (confirm(`क्या आप सच में "${itemTitle}" को पूरी तरह हटाना चाहते हैं?`)) {
+        allSeries.splice(index, 1);
+        localStorage.setItem('youflix_full_series', JSON.stringify(allSeries));
+        renderDeleteList();
+        renderGrid(allSeries);
+        updateHero();
+        updateBestMovieUI();
+        alert(`"${itemTitle}" सफलतापूर्वक डिलीट कर दी गई!`);
+      }
+    }
+
+    // 2. किसी एक एपिसोड/पार्ट को डिलीट करने का फंक्शन
+    function deleteSingleEpisode(epIndex) {
+      if (!currentSeries) return;
+      const epName = currentSeries.episodes[epIndex].name;
+      if (confirm(`क्या आप "${epName}" को डिलीट करना चाहते हैं?`)) {
+        currentSeries.episodes.splice(epIndex, 1);
+        localStorage.setItem('youflix_full_series', JSON.stringify(allSeries));
+        renderEpisodesUI();
+        renderGrid(allSeries);
+        alert(`"${epName}" हटा दिया गया!`);
+      }
+    }
+
+    function readFileAsDataURL(file) {
+      return new Promise((resolve) => {
+        if (!file) return resolve("");
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function createVideoBlobURL(file) {
+      if (!file) return "";
+      return URL.createObjectURL(file);
+    }
+
+    async function saveNewContent() {
+      const title = document.getElementById('seriesTitle').value.trim();
+      const season = document.getElementById('seasonName').value.trim() || "Season 1";
+      const partName = document.getElementById('partName').value.trim() || "Part 1";
+
+      const bannerFileInput = document.getElementById('bannerFileInput');
+      const posterFileInput = document.getElementById('posterFileInput');
+      const trailerFileInput = document.getElementById('trailerFileInput');
+      const videoFileInput = document.getElementById('videoFileInput');
+
+      let textTrailer = document.getElementById('trailerURL').value.trim();
+      let textVideo = document.getElementById('videoURL').value.trim();
+
+      let finalVideo = "";
+      if (videoFileInput.files.length > 0) {
+        finalVideo = createVideoBlobURL(videoFileInput.files[0]);
+      } else if (textVideo) {
+        finalVideo = textVideo;
+      }
+
+      if (!title || !finalVideo) {
+        alert("कृपया नाम और वीडियो अवश्य डालें!");
+        return;
+      }
+
+      let finalTrailer = "";
+      if (trailerFileInput.files.length > 0) {
+        finalTrailer = createVideoBlobURL(trailerFileInput.files[0]);
+      } else if (textTrailer) {
+        finalTrailer = textTrailer;
+      } else {
+        finalTrailer = finalVideo;
+      }
+
+      const bannerData = await readFileAsDataURL(bannerFileInput.files[0]);
+      const posterData = await readFileAsDataURL(posterFileInput.files[0]);
+
+      let fallbackImg = "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&auto=format&fit=crop";
+      const finalImg = posterData || fallbackImg;
+      const finalBanner = bannerData || finalImg;
+
+      let existing = allSeries.find(s => s.title.toLowerCase() === title.toLowerCase() && s.season.toLowerCase() === season.toLowerCase());
+
+      if (existing) {
+        existing.episodes.push({ name: partName, video: finalVideo });
+        if (bannerData) existing.banner = bannerData;
+        if (posterData) existing.img = posterData;
+        if (finalTrailer) existing.trailer = finalTrailer;
+      } else {
+        allSeries.unshift({
+          id: "s_" + Date.now(),
+          title: title,
+          season: season,
+          banner: finalBanner,
+          img: finalImg,
+          trailer: finalTrailer,
+          rating: 5.0,
+          votes: 1,
+          episodes: [{ name: partName, video: finalVideo }]
+        });
+      }
+
+      localStorage.setItem('youflix_full_series', JSON.stringify(allSeries));
+
+      document.getElementById('seriesTitle').value = '';
+      document.getElementById('seasonName').value = '';
+      document.getElementById('partName').value = '';
+      document.getElementById('bannerFileInput').value = '';
+      document.getElementById('posterFileInput').value = '';
+      document.getElementById('trailerFileInput').value = '';
+      document.getElementById('videoFileInput').value = '';
+      document.getElementById('trailerURL').value = '';
+      document.getElementById('videoURL').value = '';
+
+      closeUploadModal();
+      updateHero();
+      renderGrid(allSeries);
+      updateBestMovieUI();
+      alert(`"${title}" का "${partName}" सफलतापूर्वक जुड़ गया!`);
+    }
+
+    function renderEpisodesUI() {
+      const epList = document.getElementById('episodesList');
+      epList.innerHTML = '';
+      document.getElementById('seasonLabel').innerText = `${currentSeries.season || 'Season 1'} - (${currentSeries.episodes.length} Episodes)`;
+
+      if (currentSeries.episodes) {
+        currentSeries.episodes.forEach((ep, epIndex) => {
+          epList.innerHTML += `
+            <div class="ep-item ${epIndex === 0 ? 'active' : ''}">
+              <div class="ep-title-click" onclick="playEpisode(${epIndex}, this.parentElement)">
+                <span>▶ ${ep.name}</span>
+                <span style="color:#aaa; font-size:12px;">Play</span>
+              </div>
+              <button class="ep-delete-btn" onclick="deleteSingleEpisode(${epIndex})" title="इस पार्ट को डिलीट करें">🗑️</button>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function openSeries(index) {
+      currentSeries = allSeries[index];
+      document.getElementById('playerHeaderTitle').innerText = currentSeries.title;
+      document.getElementById('ratingMessage').innerText = '';
+      resetStarUI();
+
+      renderEpisodesUI();
+
+      if (currentSeries.trailer) {
+        playVideoUrl(currentSeries.trailer);
+      } else if (currentSeries.episodes && currentSeries.episodes.length > 0) {
+        playVideoUrl(currentSeries.episodes[0].video);
+      }
+
+      document.getElementById('playerView').style.display = 'flex';
+    }
+
+    function playCurrentTrailer() {
+      if (currentSeries && currentSeries.trailer) {
+        document.querySelectorAll('.ep-item').forEach(el => el.classList.remove('active'));
+        playVideoUrl(currentSeries.trailer);
+      }
+    }
+
+    function playEpisode(index, parentEl) {
+      document.querySelectorAll('.ep-item').forEach(item => item.classList.remove('active'));
+      if (parentEl) parentEl.classList.add('active');
+
+      totalViews += 1;
+      localStorage.setItem('youflix_views', totalViews);
+
+      playVideoUrl(currentSeries.episodes[index].video);
+    }
+
+    function playVideoUrl(url) {
+      const box = document.getElementById('videoBox');
+      let isYouTube = url.includes("youtube.com") || url.includes("youtu.be");
+
+      if (isYouTube) {
+        let ytId = "";
+        if (url.includes("watch?v=")) ytId = url.split("watch?v=")[1].split("&")[0];
+        else if (url.includes("youtu.be/")) ytId = url.split("youtu.be/")[1];
+        box.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allowfullscreen></iframe>`;
+      } else {
+        box.innerHTML = `<video src="${url}" controls autoplay></video>`;
+      }
+    }
+
+    function closePlayer() {
+      document.getElementById('playerView').style.display = 'none';
+      document.getElementById('videoBox').innerHTML = '';
+    }
+
+    function rateMovie(stars) {
+      const allStars = document.querySelectorAll('.star');
+      allStars.forEach((s, idx) => {
+        if (idx < stars) s.classList.add('selected');
+        else s.classList.remove('selected');
+      });
+
+      if (currentSeries) {
+        currentSeries.votes += 1;
+        currentSeries.rating = ((currentSeries.rating * (currentSeries.votes - 1)) + stars) / currentSeries.votes;
+        localStorage.setItem('youflix_full_series', JSON.stringify(allSeries));
+        document.getElementById('ratingMessage').innerText = `शुक्रिया! आपने ${stars} स्टार दिए हैं।`;
+        updateBestMovieUI();
+      }
+    }
+
+    function resetStarUI() {
+      document.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+    }
+
+    updateHero();
+    renderGrid(allSeries);
+    updateBestMovieUI();
+  </script>
+</body>
+</html>
